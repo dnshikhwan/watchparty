@@ -48,7 +48,17 @@ export const APP_MESSAGE = {
   serverError: "An unexpected error occured. Please try again later.",
   missingRequiredFields: "Missing required fields.",
 
+  // token
+  tokenExpired: "Token expired. Please request a new one.",
+  noRefreshToken: "No refresh token provided.",
+  invalidRefrehToken: "Invalid refresh token.",
+  newTokenCreated: "New access token successfully created.",
+
   // auth
   duplicatedUser: "User with these credentials already exists.",
   userSignedUp: "User successfully signed up.",
+  invalidCredentials: "Invalid email or password.",
+  userSignedIn: "User successfully signed in.",
+  userUnauthorized: "Unauthorized. Please sign in to access this resource.",
+  userSignedOut: "User successfully signed out.",
 };

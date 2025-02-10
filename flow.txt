@@ -1,0 +1,16 @@
+User flow
+1. User register / log in [X]
+2. User can create room
+3. User can join room
+4. Room owner receives realtime notification about people joining
+5. Room owner can invite friends
+6. User can create friend
+7. User can view friends live room
+8. User can set room settings (friends only, private, public) (other user can control settings (pause, play, volume))
+
+Features
+1. Authentication
+    1. Sign Up
+    2. Sign in
+    3. Sign Out
+    4. Refresh Token

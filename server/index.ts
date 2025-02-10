@@ -5,6 +5,8 @@ import { createRouter } from "./router";
 import { logger } from "./helpers/log.helper";
 import { requestLogger } from "./middlewares/request.middleware";
 import { errorHandler } from "./helpers/error.helper";
+import { prismaInit } from "./prisma/prisma";
+import cookieParser from "cookie-parser";
 
 dotenv.config();
 
@@ -13,10 +15,12 @@ const app: Express = express();
 
 app.use(compression());
 app.use(express.json());
+app.use(cookieParser());
 app.use(errorHandler);
 app.use(requestLogger);
 app.use("/api", createRouter());
 
 app.listen(PORT, () => {
+  prismaInit();
   logger.info(`Server is running on port ${PORT}`);
 });

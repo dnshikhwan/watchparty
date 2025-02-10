@@ -8,7 +8,13 @@ export const checkHealth = (
   next: NextFunction
 ) => {
   try {
-    return sendResponse(res, true, HTTP_RESPONSE_CODE.OK, "ok");
+    const user = req.user;
+    return sendResponse(res, true, HTTP_RESPONSE_CODE.OK, "ok", {
+      data: {
+        username: user.username,
+        email: user.email,
+      },
+    });
   } catch (err) {
     next(err);
   }

@@ -1,5 +1,6 @@
 export const configs = {
   PORT: process.env.PORT,
+  JWT_SECRET: String(process.env.JWT_SECRET),
 };
 
 export const corsOptions = {
