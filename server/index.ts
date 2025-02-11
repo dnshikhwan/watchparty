@@ -1,19 +1,23 @@
 import express, { Express } from "express";
 import compression from "compression";
 import dotenv from "dotenv";
+import cookieParser from "cookie-parser";
+import cors from "cors";
+
+dotenv.config();
+
 import { createRouter } from "./router";
 import { logger } from "./helpers/log.helper";
 import { requestLogger } from "./middlewares/request.middleware";
 import { errorHandler } from "./helpers/error.helper";
 import { prismaInit } from "./prisma/prisma";
-import cookieParser from "cookie-parser";
-
-dotenv.config();
+import { corsOptions } from "./configs";
 
 const PORT: string | number = process.env.PORT || 5000;
 const app: Express = express();
 
 app.use(compression());
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
 app.use(errorHandler);

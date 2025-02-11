@@ -8,7 +8,7 @@ interface LayoutProps {
 }
 
 const navItems = [
-  { label: "Home", url: "/" },
+  { label: "Home", url: "/dashboard" },
   { label: "Rooms", url: "/rooms" },
   { label: "Friends", url: "/friends" },
 ];

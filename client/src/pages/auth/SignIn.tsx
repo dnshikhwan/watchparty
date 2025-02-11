@@ -1,4 +1,4 @@
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { Button } from "../../components/button";
 import {
   Field,
@@ -8,37 +8,33 @@ import {
   Legend,
 } from "../../components/fieldset";
 import { Input } from "../../components/input";
+import { Switch } from "../../components/switch";
 import { Text } from "../../components/text";
 import { FormEvent, useState } from "react";
 import { AxiosError } from "axios";
 import toast from "react-hot-toast";
 import { axiosConfig } from "../../axiosConfig";
 
-const SignUp = () => {
-  const [username, setUsername] = useState("");
+const SignIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const navigate = useNavigate();
 
-  const handleSignUp = async (e: FormEvent) => {
+  const handleSignIn = async (e: FormEvent) => {
     e.preventDefault();
-    try {
-      if (password !== confirmPassword) {
-        return toast.error("Passwords don't match.");
-      }
 
+    try {
       const data = {
-        username,
         email,
         password,
       };
 
-      const response = await axiosConfig.post("/auth/signup", data);
+      const response = await axiosConfig.post("/auth/signin", data);
       toast.success(response.data.message);
+      return navigate("/dashboard");
     } catch (err) {
       if (err instanceof AxiosError) {
         toast.error(err.response?.data.message);
-        console.log(err.response?.data);
       }
     }
   };
@@ -47,18 +43,11 @@ const SignUp = () => {
       <div className="flex justify-center items-center min-h-screen">
         <form action="" className="w-full max-w-sm">
           <Fieldset>
-            <Legend>Create your new account!</Legend>
-            <Text>Join us and watch together with friends and family</Text>
+            <Legend>Welcome back</Legend>
+            <Text>
+              Join us back and enjoy quality time with someone you love!
+            </Text>
             <FieldGroup>
-              <Field>
-                <Label>Username</Label>
-                <Input
-                  name="username"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  type="text"
-                />
-              </Field>
               <Field>
                 <Label>Email Address</Label>
                 <Input
@@ -71,34 +60,30 @@ const SignUp = () => {
               <Field>
                 <Label>Password</Label>
                 <Input
-                  type="password"
+                  name="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  name="password"
-                />
-              </Field>
-              <Field>
-                <Label>Confirm Password</Label>
-                <Input
-                  name="confirm_password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
                   type="password"
                 />
               </Field>
+              <Field className="flex justify-between items-center">
+                <Field className="flex gap-2">
+                  <Switch name="remember_me" />
+                  <Label>Remember me</Label>
+                </Field>
+                <Text>
+                  <Link to={"/auth/request-reset-password"}>
+                    Forgot password?
+                  </Link>
+                </Text>
+              </Field>
               <Button
-                onClick={handleSignUp}
-                className="w-full hover:cursor-pointer dark:bg-white"
+                className="w-full hover:cursor-pointer"
                 color="dark/white"
+                onClick={handleSignIn}
               >
-                Sign up
+                Sign in
               </Button>
-              <Text>
-                Already have an accounnt?{" "}
-                <Link to={"/auth/signin"} className="text-white">
-                  Sign in
-                </Link>
-              </Text>
             </FieldGroup>
           </Fieldset>
         </form>
@@ -107,4 +92,4 @@ const SignUp = () => {
   );
 };
 
-export default SignUp;
+export default SignIn;

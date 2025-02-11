@@ -4,7 +4,7 @@ export const configs = {
 };
 
 export const corsOptions = {
-  origin: process.env.FRONTEND_URL,
+  origin: String(process.env.FRONTEND_URL),
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],

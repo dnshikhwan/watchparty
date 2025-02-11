@@ -10,7 +10,9 @@ User flow
 
 Features
 1. Authentication
-    1. Sign Up
-    2. Sign in
-    3. Sign Out
-    4. Refresh Token
+    1. Sign Up [X]
+    2. Sign in [X]
+    3. Sign Out [X]
+    4. Refresh Token [X]
+    5. Request reset password
+    6. Reset password
