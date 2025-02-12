@@ -6,7 +6,8 @@ import { APP_MESSAGE, HTTP_RESPONSE_CODE } from "../constants";
 import prisma from "../prisma/prisma";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { configs, cookieOptions } from "../configs";
-import { User } from "@prisma/client";
+import { ResetToken, User } from "@prisma/client";
+import sendMail from "../helpers/sendMail.helper";
 
 // sign up
 export const signUp = async (
@@ -219,6 +220,145 @@ export const refreshToken = async (
         APP_MESSAGE.invalidRefrehToken
       );
     }
+    next(err);
+  }
+};
+
+// request reset password
+export const requestResetPassword = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return sendResponse(
+        res,
+        false,
+        HTTP_RESPONSE_CODE.BAD_REQUEST,
+        APP_MESSAGE.missingRequiredFields
+      );
+    }
+
+    const user = await prisma.user.findUniqueOrThrow({
+      where: {
+        email,
+      },
+    });
+
+    if (user) {
+      const token = jwt.sign(
+        {
+          user_id: user.id,
+          email: user.email,
+        },
+        configs.JWT_SECRET,
+        {
+          expiresIn: "10m",
+        }
+      );
+
+      const hashedToken = await argon2.hash(token);
+
+      await prisma.resetToken.create({
+        data: {
+          user_id: user.id,
+          token: hashedToken,
+        },
+      });
+
+      // send email to the user
+      sendMail(
+        user,
+        "Reset password link",
+        `${process.env.FRONTEND_URL}/auth/reset-password/${token}`
+      );
+    }
+
+    return sendResponse(
+      res,
+      true,
+      HTTP_RESPONSE_CODE.OK,
+      APP_MESSAGE.resetEmailSent
+    );
+  } catch (err) {
+    if (err instanceof PrismaClientKnownRequestError) {
+      if (err.code === "P2025") {
+        return sendResponse(
+          res,
+          true,
+          HTTP_RESPONSE_CODE.OK,
+          APP_MESSAGE.resetEmailSent
+        );
+      }
+      if (err.code === "P2002") {
+        return sendResponse(
+          res,
+          false,
+          HTTP_RESPONSE_CODE.CONFLICT,
+          APP_MESSAGE.resetEmailAlreadySent
+        );
+      }
+    }
+    next(err);
+  }
+};
+
+// verify reset token
+export const verifyResetToken = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { token } = req.params;
+
+    const decoded = jwt.verify(token, configs.JWT_SECRET) as ResetToken;
+
+    const resetToken = await prisma.resetToken.findUnique({
+      where: {
+        user_id: decoded.user_id,
+      },
+    });
+
+    if (!resetToken) {
+      return sendResponse(
+        res,
+        false,
+        HTTP_RESPONSE_CODE.NOT_FOUND,
+        APP_MESSAGE.userNotFound
+      );
+    }
+
+    const checkToken = await argon2.verify(resetToken.token, token);
+
+    if (!checkToken) {
+      return sendResponse(
+        res,
+        false,
+        HTTP_RESPONSE_CODE.UNAUTHORIZED,
+        APP_MESSAGE.invalidToken
+      );
+    }
+
+    return sendResponse(
+      res,
+      true,
+      HTTP_RESPONSE_CODE.OK,
+      APP_MESSAGE.tokenValidated
+    );
+  } catch (err) {
+    if (err instanceof JsonWebTokenError) {
+      return sendResponse(
+        res,
+        false,
+        HTTP_RESPONSE_CODE.UNAUTHORIZED,
+        APP_MESSAGE.invalidToken
+      );
+    }
+
     next(err);
   }
 };

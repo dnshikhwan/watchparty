@@ -53,6 +53,13 @@ export const APP_MESSAGE = {
   noRefreshToken: "No refresh token provided.",
   invalidRefrehToken: "Invalid refresh token.",
   newTokenCreated: "New access token successfully created.",
+  invalidToken: "Token provided is invalid.",
+  tokenValidated: "Token is valid.",
+
+  //email
+  resetEmailSent: "A link has been sent to your email address.",
+  resetEmailAlreadySent:
+    "Link has already been sent to your email address. Please check your email.",
 
   // auth
   duplicatedUser: "User with these credentials already exists.",
@@ -61,4 +68,7 @@ export const APP_MESSAGE = {
   userSignedIn: "User successfully signed in.",
   userUnauthorized: "Unauthorized. Please sign in to access this resource.",
   userSignedOut: "User successfully signed out.",
+
+  // user
+  userNotFound: "User not found.",
 };
