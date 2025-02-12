@@ -1,5 +1,5 @@
 import { AxiosError } from "axios";
-import { useEffect, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router";
 import { axiosConfig } from "../../axiosConfig";
@@ -17,6 +17,9 @@ import { Input } from "../../components/input";
 const ResetPassword = () => {
   const { token } = useParams();
   const [tokenValid, setTokenValid] = useState(false);
+  const [userId, setUserId] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const navigate = useNavigate();
 
   console.log(token);
@@ -27,6 +30,7 @@ const ResetPassword = () => {
         const response = await axiosConfig.get(`/auth/reset-password/${token}`);
         console.log(response.data);
         setTokenValid(true);
+        setUserId(response.data.details.data.user_id);
       } catch (err) {
         if (err instanceof AxiosError) {
           toast.error(err.response?.data.message);
@@ -37,6 +41,27 @@ const ResetPassword = () => {
 
     verifyResetToken();
   }, []);
+
+  const handleResetPassword = async (e: FormEvent) => {
+    e.preventDefault();
+
+    try {
+      const data = {
+        user_id: userId,
+        password,
+      };
+
+      const response = await axiosConfig.put("/auth/reset-password", data);
+      toast.success(response.data.message);
+      navigate("/auth/signin");
+    } catch (err) {
+      if (err instanceof AxiosError) {
+        toast.error(err.response?.data.message);
+        setPassword("");
+        setConfirmPassword("");
+      }
+    }
+  };
 
   return (
     <>
@@ -65,15 +90,26 @@ const ResetPassword = () => {
               <FieldGroup>
                 <Field>
                   <Label>New Password</Label>
-                  <Input name="password" type="password" />
+                  <Input
+                    name="password"
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
                 </Field>
                 <Field>
                   <Label>Confirm Password</Label>
-                  <Input name="confirm_password" type="password" />
+                  <Input
+                    name="confirm_password"
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                  />
                 </Field>
                 <Button
                   className="w-full hover:cursor-pointer"
                   color="dark/white"
+                  onClick={handleResetPassword}
                 >
                   Reset password
                 </Button>

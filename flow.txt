@@ -15,4 +15,4 @@ Features
     3. Sign Out [X]
     4. Refresh Token [X]
     5. Request reset password [X]
-    6. Reset password
+    6. Reset password [X]

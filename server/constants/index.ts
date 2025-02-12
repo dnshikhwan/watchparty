@@ -68,6 +68,7 @@ export const APP_MESSAGE = {
   userSignedIn: "User successfully signed in.",
   userUnauthorized: "Unauthorized. Please sign in to access this resource.",
   userSignedOut: "User successfully signed out.",
+  passwordResetted: "Reset password successful.",
 
   // user
   userNotFound: "User not found.",

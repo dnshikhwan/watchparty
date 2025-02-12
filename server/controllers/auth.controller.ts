@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
   refreshToken,
   requestResetPassword,
+  resetPassword,
   signIn,
   signOut,
   signUp,
@@ -17,6 +18,7 @@ const authController = () => {
   router.get("/refresh", authMiddleware, refreshToken);
   router.get("/signout", authMiddleware, signOut);
   router.post("/request-reset-password", requestResetPassword);
+  router.put("/reset-password", resetPassword);
   router.get("/reset-password/:token", verifyResetToken);
 
   return router;

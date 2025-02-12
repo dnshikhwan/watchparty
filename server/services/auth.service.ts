@@ -347,7 +347,12 @@ export const verifyResetToken = async (
       res,
       true,
       HTTP_RESPONSE_CODE.OK,
-      APP_MESSAGE.tokenValidated
+      APP_MESSAGE.tokenValidated,
+      {
+        data: {
+          user_id: decoded.user_id,
+        },
+      }
     );
   } catch (err) {
     if (err instanceof JsonWebTokenError) {
@@ -359,6 +364,37 @@ export const verifyResetToken = async (
       );
     }
 
+    next(err);
+  }
+};
+
+// reset password
+export const resetPassword = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { user_id, password } = req.body;
+
+    const hashedPassword = await argon2.hash(password);
+
+    await prisma.user.update({
+      where: {
+        id: user_id,
+      },
+      data: {
+        password: hashedPassword,
+      },
+    });
+
+    return sendResponse(
+      res,
+      true,
+      HTTP_RESPONSE_CODE.OK,
+      APP_MESSAGE.passwordResetted
+    );
+  } catch (err) {
     next(err);
   }
 };
