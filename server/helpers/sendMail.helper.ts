@@ -1,14 +1,14 @@
 import nodeMailer from "nodemailer";
 import { logger } from "./log.helper";
-import { transport } from "winston";
 import { User } from "@prisma/client";
+import { configs } from "../configs";
 
 const transporter = nodeMailer.createTransport({
   port: 465,
   host: "smtp.gmail.com",
   auth: {
-    user: "danishikhwn03@gmail.com",
-    pass: "",
+    user: configs.GMAIL_USER,
+    pass: configs.GMAIL_PASS,
   },
   secure: true,
 });
