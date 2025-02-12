@@ -21,6 +21,7 @@ model User {
   created_at DateTime    @default(now())
   updated_at DateTime    @default(now())
   resetToken ResetToken?
+  room       Room[]
 }
 
 model ResetToken {
@@ -30,4 +31,15 @@ model ResetToken {
   user       User     @relation(fields: [user_id], references: [id])
   created_at DateTime @default(now())
   updated_at DateTime @default(now())
+}
+
+model Room {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String
+  owner_id    Int
+  video_url   String
+  owner       User     @relation(fields: [owner_id], references: [id])
+  created_at  DateTime @default(now())
+  updated_at  DateTime @default(now())
 }

@@ -388,6 +388,12 @@ export const resetPassword = async (
       },
     });
 
+    await prisma.resetToken.delete({
+      where: {
+        user_id,
+      },
+    });
+
     return sendResponse(
       res,
       true,

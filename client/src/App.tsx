@@ -5,6 +5,7 @@ import SignIn from "./pages/auth/SignIn";
 import RequestResetPassword from "./pages/auth/RequestResetPassword";
 import Dashboard from "./pages/dashboard/Dashboard";
 import ResetPassword from "./pages/auth/ResetPassword";
+import Landing from "./pages/landing/Landing";
 
 const App = () => {
   return (
@@ -19,6 +20,7 @@ const App = () => {
           element={<RequestResetPassword />}
         />
         <Route path="/auth/reset-password/:token" element={<ResetPassword />} />
+        <Route path="/" element={<Landing />} />
 
         {/* protected routes */}
         <Route path="/dashboard" element={<Dashboard />} />

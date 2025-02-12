@@ -56,7 +56,7 @@ const Dashboard = () => {
         </div>
         <div className="mt-10">
           <Subheading>Live rooms</Subheading>
-          <div className="mx-auto mt-16 grid max-w-2xl gap-y-10 lg:mx-0 lg:max-w-none lg:grid-cols-5">
+          <div className="mx-auto mt-5 grid max-w-2xl gap-y-10 lg:mx-0 lg:max-w-none lg:grid-cols-5">
             {posts.map((post) => (
               <article
                 key={post.id}
