@@ -48,6 +48,7 @@ export const APP_MESSAGE = {
   serverError: "An unexpected error occured. Please try again later.",
   success: "Success",
   missingRequiredFields: "Missing required fields.",
+  unexpectedError: "Unexpected error occured.",
 
   // token
   tokenExpired: "Token expired. Please request a new one.",

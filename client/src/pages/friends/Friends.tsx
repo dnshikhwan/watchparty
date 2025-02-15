@@ -14,26 +14,34 @@ import {
   TableHeader,
   TableRow,
 } from "../../components/table";
-import { Alert, AlertActions, AlertTitle } from "../../components/alert";
 import toast from "react-hot-toast";
 import { axiosConfig } from "../../axiosConfig";
 import { AxiosError } from "axios";
+import {
+  Alert,
+  AlertActions,
+  AlertBody,
+  AlertDescription,
+  AlertTitle,
+} from "../../components/alert";
+import PendingFriendModal from "../../components/PendingFriendModal";
 
 interface Friend {
   friend: {
     id: number;
     username: string;
     email: string;
+    status: string;
   };
 }
 
 const Friends = () => {
-  const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [pendingCount, setPendingCount] = useState(0);
   const [friends, setFriends] = useState<Friend[]>([]);
+  const [pendingModal, setPendingModal] = useState(false);
 
   const handleSearch = async (e: FormEvent) => {
     e.preventDefault();
@@ -66,20 +74,38 @@ const Friends = () => {
     fetchPendingRequest();
   }, []);
 
-  useEffect(() => {
-    const fetchFriends = async () => {
-      try {
-        const response = await axiosConfig.get("/friends");
-        setFriends(response.data.details.data.friends);
-      } catch (err) {
-        if (err instanceof AxiosError) {
-          toast.error(err.response?.data.message);
-        }
+  const fetchFriends = async () => {
+    try {
+      const response = await axiosConfig.get("/friends");
+      setFriends(response.data.details.data.friends);
+    } catch (err) {
+      if (err instanceof AxiosError) {
+        toast.error(err.response?.data.message);
       }
-    };
+    }
+  };
 
+  useEffect(() => {
     fetchFriends();
   }, []);
+
+  const handleSendFriendRequest = async (e: FormEvent, friend_id: number) => {
+    e.preventDefault();
+    try {
+      const data = {
+        friend_id,
+      };
+
+      const response = await axiosConfig.post("/friends", data);
+      toast.success(response.data.message);
+      setQuery("");
+      await handleSearch(e);
+    } catch (err) {
+      if (err instanceof AxiosError) {
+        toast.error(err.response?.data.message);
+      }
+    }
+  };
 
   return (
     <>
@@ -105,12 +131,20 @@ const Friends = () => {
               Search
             </Button>
           </form>
-          <Button className="hover:cursor-pointer" color="dark/white">
+          <Button
+            onClick={() => setPendingModal(true)}
+            className="hover:cursor-pointer"
+            color="dark/white"
+          >
             Friend request
             {pendingCount !== 0 && (
               <Badge color="red">{pendingCount > 0 ? pendingCount : ""}</Badge>
             )}
           </Button>
+          <PendingFriendModal
+            pendingModal
+            setPendingModal={() => setPendingModal(false)}
+          />
         </div>
         <div>
           <Subheading className="my-5">Friends list</Subheading>
@@ -125,7 +159,7 @@ const Friends = () => {
             <TableBody>
               {results.length === 0
                 ? friends.map(({ friend }) => (
-                    <TableRow>
+                    <TableRow key={friend.id}>
                       <TableCell className="flex items-center gap-2">
                         <Avatar
                           className="size-8"
@@ -143,31 +177,15 @@ const Friends = () => {
                         <Badge className="ml-2">Chat</Badge>
                         <Badge
                           color="red"
-                          onClick={() => setIsOpen(true)}
                           className="ml-2 hover:cursor-pointer"
                         >
-                          Unfriend
+                          {friend.status === "accepted" ? "Unfollow" : "Follow"}
                         </Badge>
-                        <Alert open={isOpen} onClose={setIsOpen}>
-                          <AlertTitle>Are you sure?</AlertTitle>
-
-                          <AlertActions>
-                            <Button plain onClick={() => setIsOpen(false)}>
-                              Cancel
-                            </Button>
-                            <Button
-                              color="red"
-                              onClick={() => setIsOpen(false)}
-                            >
-                              Unfriend
-                            </Button>
-                          </AlertActions>
-                        </Alert>
                       </TableCell>
                     </TableRow>
                   ))
                 : results.map(({ id, username }) => (
-                    <TableRow>
+                    <TableRow key={id}>
                       <TableCell className="flex items-center gap-2">
                         <Avatar
                           className="size-8"
@@ -183,28 +201,24 @@ const Friends = () => {
                       <TableCell>
                         <Badge>Join room</Badge>
                         <Badge className="ml-2">Chat</Badge>
-                        <Badge
-                          color="red"
-                          onClick={() => setIsOpen(true)}
-                          className="ml-2 hover:cursor-pointer"
-                        >
-                          Unfriend
-                        </Badge>
-                        <Alert open={isOpen} onClose={setIsOpen}>
-                          <AlertTitle>Are you sure?</AlertTitle>
-
-                          <AlertActions>
-                            <Button plain onClick={() => setIsOpen(false)}>
-                              Cancel
-                            </Button>
-                            <Button
-                              color="red"
-                              onClick={() => setIsOpen(false)}
-                            >
-                              Unfriend
-                            </Button>
-                          </AlertActions>
-                        </Alert>
+                        {friends.some(({ friend }) => {
+                          return friend.username === username;
+                        }) ? (
+                          <Badge
+                            color="red"
+                            className="ml-2 hover:cursor-pointer"
+                          >
+                            Unfollow
+                          </Badge>
+                        ) : (
+                          <Badge
+                            color="green"
+                            onClick={(e) => handleSendFriendRequest(e, id)}
+                            className="ml-2 hover:cursor-pointer"
+                          >
+                            Follow
+                          </Badge>
+                        )}
                       </TableCell>
                     </TableRow>
                   ))}

@@ -3,6 +3,7 @@ import { sendResponse } from "../helpers/response.helper";
 import { APP_MESSAGE, HTTP_RESPONSE_CODE } from "../constants";
 import prisma from "../prisma/prisma";
 import { User } from "@prisma/client";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
 export const searchFriendsByUsername = async (
   req: Request,
@@ -103,8 +104,17 @@ export const getPendingFriendRequest = async (
 
     const pendingRequest = await prisma.friend.findMany({
       where: {
-        user_id: user.id,
+        friend_id: user.id,
         status: "pending",
+      },
+      include: {
+        friend: {
+          select: {
+            id: true,
+            username: true,
+            email: true,
+          },
+        },
       },
     });
 
@@ -170,6 +180,14 @@ export const addFriends = async (
       }
     );
   } catch (err) {
+    if (err instanceof PrismaClientKnownRequestError) {
+      return sendResponse(
+        res,
+        false,
+        HTTP_RESPONSE_CODE.BAD_REQUEST,
+        APP_MESSAGE.unexpectedError
+      );
+    }
     next(err);
   }
 };
