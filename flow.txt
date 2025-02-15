@@ -7,6 +7,10 @@ User flow
 6. User can create friend
 7. User can view friends live room
 8. User can set room settings (friends only, private, public) (other user can control settings (pause, play, volume))
+9. Room owner can remove user
+10. User can subscribe to premium plan
+11. Room owner can setup password for private room
+12. Chat functionality in room
 
 Features
 1. Authentication

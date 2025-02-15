@@ -2,7 +2,6 @@ import { Avatar } from "../../components/avatar";
 import { Divider } from "../../components/divider";
 import { Heading, Subheading } from "../../components/heading";
 import Layout from "../../components/Layout";
-import avatarImage from "../../assets/image.png";
 
 const posts = [
   {
@@ -46,17 +45,41 @@ const Dashboard = () => {
         <div>
           <Subheading>Active friends</Subheading>
           <div className="my-4 flex flex-wrap gap-5">
-            <Avatar initials="DI" className="size-10" src={avatarImage} />
-            <Avatar initials="DI" className="size-10" src={avatarImage} />
-            <Avatar initials="DI" className="size-10" src={avatarImage} />
-            <Avatar initials="DI" className="size-10" src={avatarImage} />
-            <Avatar initials="DI" className="size-10" src={avatarImage} />
-            <Avatar initials="DI" className="size-10" src={avatarImage} />
+            <Avatar
+              initials="DI"
+              className="size-10"
+              src={"https://avatar.iran.liara.run/public/55"}
+            />
+            <Avatar
+              initials="DI"
+              className="size-10"
+              src={"https://avatar.iran.liara.run/public/11"}
+            />
+            <Avatar
+              initials="DI"
+              className="size-10"
+              src={"https://avatar.iran.liara.run/public/60"}
+            />
+            <Avatar
+              initials="DI"
+              className="size-10"
+              src={"https://avatar.iran.liara.run/public/99"}
+            />
+            <Avatar
+              initials="DI"
+              className="size-10"
+              src={"https://avatar.iran.liara.run/public/76"}
+            />
+            <Avatar
+              initials="DI"
+              className="size-10"
+              src={"https://avatar.iran.liara.run/public/21"}
+            />
           </div>
         </div>
         <div className="mt-10">
           <Subheading>Live rooms</Subheading>
-          <div className="mx-auto mt-5 grid max-w-2xl gap-y-10 lg:mx-0 lg:max-w-none lg:grid-cols-5">
+          <div className=" mt-5 grid max-w-2xl gap-y-10 lg:mx-0 lg:max-w-none lg:grid-cols-5">
             {posts.map((post) => (
               <article
                 key={post.id}

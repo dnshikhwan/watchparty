@@ -32,8 +32,8 @@ export const authMiddleware = (
       return sendResponse(
         res,
         false,
-        HTTP_RESPONSE_CODE.FORBIDDEN,
-        APP_MESSAGE.tokenExpired
+        HTTP_RESPONSE_CODE.UNAUTHORIZED,
+        APP_MESSAGE.accessTokenExpired
       );
     }
     next(err);

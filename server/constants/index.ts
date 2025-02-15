@@ -46,6 +46,7 @@ export const enum HttpStatusCode {
 export const APP_MESSAGE = {
   // general
   serverError: "An unexpected error occured. Please try again later.",
+  success: "Success",
   missingRequiredFields: "Missing required fields.",
 
   // token
@@ -55,6 +56,7 @@ export const APP_MESSAGE = {
   newTokenCreated: "New access token successfully created.",
   invalidToken: "Token provided is invalid.",
   tokenValidated: "Token is valid.",
+  accessTokenExpired: "Token expired. Please sign in again.",
 
   //email
   resetEmailSent: "A link has been sent to your email address.",
@@ -72,4 +74,11 @@ export const APP_MESSAGE = {
 
   // user
   userNotFound: "User not found.",
+
+  // room
+  roomCreated: "Room successfully created.",
+
+  //friend
+  friendRequestSent: "Friend request successfully sent.",
+  friendAccepted: "Friend request updated successfully.",
 };

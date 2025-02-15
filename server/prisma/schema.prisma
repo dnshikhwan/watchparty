@@ -19,9 +19,11 @@ model User {
   username   String      @unique
   password   String
   created_at DateTime    @default(now())
-  updated_at DateTime    @default(now())
+  updated_at DateTime    @updatedAt
   resetToken ResetToken?
   room       Room[]
+  friends    Friend[]    @relation("UserFriends")
+  friendsOf  Friend[]    @relation("UserFriendsOf")
 }
 
 model ResetToken {
@@ -30,7 +32,7 @@ model ResetToken {
   user_id    Int      @unique
   user       User     @relation(fields: [user_id], references: [id])
   created_at DateTime @default(now())
-  updated_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 }
 
 model Room {
@@ -41,5 +43,19 @@ model Room {
   video_url   String
   owner       User     @relation(fields: [owner_id], references: [id])
   created_at  DateTime @default(now())
-  updated_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+}
+
+model Friend {
+  id         Int      @id @default(autoincrement())
+  user_id    Int
+  friend_id  Int
+  status     String   @default("pending")
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  user   User @relation("UserFriends", fields: [user_id], references: [id])
+  friend User @relation("UserFriendsOf", fields: [friend_id], references: [id])
+
+  @@unique([user_id, friend_id])
 }

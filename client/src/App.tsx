@@ -6,6 +6,9 @@ import RequestResetPassword from "./pages/auth/RequestResetPassword";
 import Dashboard from "./pages/dashboard/Dashboard";
 import ResetPassword from "./pages/auth/ResetPassword";
 import Landing from "./pages/landing/Landing";
+import Rooms from "./pages/rooms/Rooms";
+import CreateRoom from "./pages/rooms/CreateRoom";
+import Friends from "./pages/friends/Friends";
 
 const App = () => {
   return (
@@ -24,6 +27,11 @@ const App = () => {
 
         {/* protected routes */}
         <Route path="/dashboard" element={<Dashboard />} />
+
+        <Route path="/rooms" element={<Rooms />} />
+        <Route path="/rooms/create" element={<CreateRoom />} />
+
+        <Route path="/friends" element={<Friends />} />
       </Routes>
     </>
   );
