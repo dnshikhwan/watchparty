@@ -265,10 +265,8 @@ export const unfollowFriend = async (
     await prisma.friend.deleteMany({
       where: {
         OR: [
-          { user_id: user.id },
-          { friend_id: user.id },
-          { user_id: friend_id },
-          { friend_id: friend_id },
+          { user_id: user.id, friend_id: friend_id },
+          { user_id: friend_id, friend_id: user.id },
         ],
       },
     });
