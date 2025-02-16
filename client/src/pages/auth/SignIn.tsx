@@ -31,6 +31,7 @@ const SignIn = () => {
 
       const response = await axiosConfig.post("/auth/signin", data);
       toast.success(response.data.message);
+      localStorage.setItem("username", response.data.details.data.username);
       return navigate("/dashboard");
     } catch (err) {
       if (err instanceof AxiosError) {

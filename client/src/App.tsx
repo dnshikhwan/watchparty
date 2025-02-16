@@ -9,6 +9,7 @@ import Landing from "./pages/landing/Landing";
 import Rooms from "./pages/rooms/Rooms";
 import CreateRoom from "./pages/rooms/CreateRoom";
 import Friends from "./pages/friends/Friends";
+import Chat from "./pages/chat/Chat";
 
 const App = () => {
   return (
@@ -32,6 +33,7 @@ const App = () => {
         <Route path="/rooms/create" element={<CreateRoom />} />
 
         <Route path="/friends" element={<Friends />} />
+        <Route path="/chat/:username" element={<Chat />} />
       </Routes>
     </>
   );

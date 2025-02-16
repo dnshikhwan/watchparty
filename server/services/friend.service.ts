@@ -12,6 +12,7 @@ export const searchFriendsByUsername = async (
 ) => {
   try {
     const { query } = req.query;
+    const user = req.user as User;
 
     if (!query || typeof query !== "string") {
       return sendResponse(
@@ -27,6 +28,9 @@ export const searchFriendsByUsername = async (
         username: {
           contains: query,
           mode: "insensitive",
+        },
+        id: {
+          not: user.id,
         },
       },
       select: {
@@ -70,11 +74,18 @@ export const getFriends = async (
 
     const friends = await prisma.friend.findMany({
       where: {
-        user_id: user.id,
+        OR: [{ user_id: user.id }, { friend_id: user.id }],
         status: "accepted",
       },
       include: {
         friend: {
+          select: {
+            id: true,
+            username: true,
+            email: true,
+          },
+        },
+        user: {
           select: {
             id: true,
             username: true,
@@ -108,7 +119,7 @@ export const getPendingFriendRequest = async (
         status: "pending",
       },
       include: {
-        friend: {
+        user: {
           select: {
             id: true,
             username: true,
@@ -210,14 +221,55 @@ export const acceptFriendRequest = async (
       );
     }
 
-    await prisma.friend.updateMany({
+    const updatedFriends = await prisma.friend.updateManyAndReturn({
       where: {
-        user_id: user.id,
+        user_id: Number(friend_id),
         status: "pending",
-        friend_id: Number(friend_id),
+        friend_id: user.id,
       },
       data: {
         status: "accepted",
+      },
+    });
+
+    if (updatedFriends.length === 0) {
+      return sendResponse(
+        res,
+        false,
+        HTTP_RESPONSE_CODE.BAD_REQUEST,
+        APP_MESSAGE.unexpectedError
+      );
+    }
+
+    return sendResponse(
+      res,
+      true,
+      HTTP_RESPONSE_CODE.OK,
+      APP_MESSAGE.friendAccepted
+    );
+  } catch (err) {
+    next(err);
+  }
+};
+
+// unfollow friend
+export const unfollowFriend = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const user = req.user as User;
+    const { friend_id } = req.body;
+
+    await prisma.friend.deleteMany({
+      where: {
+        OR: [
+          { user_id: user.id },
+          { friend_id: user.id },
+          { user_id: friend_id },
+          { friend_id: friend_id },
+        ],
       },
     });
 
@@ -225,7 +277,7 @@ export const acceptFriendRequest = async (
       res,
       true,
       HTTP_RESPONSE_CODE.OK,
-      APP_MESSAGE.friendAccepted
+      APP_MESSAGE.unfriendSuccessful
     );
   } catch (err) {
     next(err);

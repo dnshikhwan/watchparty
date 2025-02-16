@@ -25,13 +25,19 @@ import {
   AlertTitle,
 } from "../../components/alert";
 import PendingFriendModal from "../../components/PendingFriendModal";
+import { Link } from "react-router";
 
 interface Friend {
+  status: string;
   friend: {
     id: number;
     username: string;
     email: string;
-    status: string;
+  };
+  user: {
+    id: number;
+    username: string;
+    email: string;
   };
 }
 
@@ -52,8 +58,6 @@ const Friends = () => {
       setResults(response.data.details.data.users);
     } catch (err) {
       setResults([]);
-      toast.error("User not found.");
-      console.log(err);
     } finally {
       setLoading(false);
     }
@@ -107,6 +111,24 @@ const Friends = () => {
     }
   };
 
+  const handleUnfollow = async (e: FormEvent, friend_id: number) => {
+    e.preventDefault();
+    try {
+      const data = {
+        friend_id,
+      };
+
+      const response = await axiosConfig.post("/friends/unfriend", data);
+      toast.success(response.data.message);
+    } catch (err) {
+      if (err instanceof AxiosError) {
+        toast.error(err.response?.data.message);
+      }
+    }
+  };
+
+  const username = localStorage.getItem("username");
+
   return (
     <>
       <Layout>
@@ -120,7 +142,10 @@ const Friends = () => {
                 placeholder="Search friends..."
                 aria-label="search"
                 value={query}
-                onChange={(e) => setQuery(e.target.value)}
+                onChange={(e) => {
+                  setQuery(e.target.value);
+                  handleSearch(e);
+                }}
               />
             </InputGroup>
             <Button
@@ -142,8 +167,8 @@ const Friends = () => {
             )}
           </Button>
           <PendingFriendModal
-            pendingModal
-            setPendingModal={() => setPendingModal(false)}
+            pendingModal={pendingModal}
+            setPendingModal={setPendingModal}
           />
         </div>
         <div>
@@ -158,14 +183,16 @@ const Friends = () => {
             </TableHead>
             <TableBody>
               {results.length === 0
-                ? friends.map(({ friend }) => (
+                ? friends.map(({ status, friend, user }) => (
                     <TableRow key={friend.id}>
                       <TableCell className="flex items-center gap-2">
                         <Avatar
                           className="size-8"
                           src={`https://avatar.iran.liara.run/public/${friend.id}`}
                         />
-                        {friend.username}
+                        {friend.username === username
+                          ? user.username
+                          : friend.username}
                       </TableCell>
                       <TableCell>
                         {/* <Badge color={status === "Online" ? "green" : "red"}>
@@ -174,13 +201,40 @@ const Friends = () => {
                       </TableCell>
                       <TableCell>
                         <Badge>Join room</Badge>
-                        <Badge className="ml-2">Chat</Badge>
-                        <Badge
-                          color="red"
-                          className="ml-2 hover:cursor-pointer"
-                        >
-                          {friend.status === "accepted" ? "Unfollow" : "Follow"}
+                        <Badge className="ml-2">
+                          <Link
+                            to={`/chat/${
+                              friend.username === username
+                                ? user.username
+                                : friend.username
+                            }`}
+                          >
+                            Chat
+                          </Link>
                         </Badge>
+                        {status === "accepted" ? (
+                          <Badge
+                            color="red"
+                            onClick={(e) =>
+                              handleUnfollow(
+                                e,
+                                friend.username === username
+                                  ? user.id
+                                  : friend.id
+                              )
+                            }
+                            className="ml-2 hover:cursor-pointer"
+                          >
+                            Unfollow
+                          </Badge>
+                        ) : (
+                          <Badge
+                            color="green"
+                            className="ml-2 hover:cursor-pointer"
+                          >
+                            Follow
+                          </Badge>
+                        )}
                       </TableCell>
                     </TableRow>
                   ))

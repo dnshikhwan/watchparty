@@ -82,4 +82,5 @@ export const APP_MESSAGE = {
   //friend
   friendRequestSent: "Friend request successfully sent.",
   friendAccepted: "Friend request updated successfully.",
+  unfriendSuccessful: "Unfriend successful.",
 };
