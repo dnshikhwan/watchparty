@@ -17,13 +17,6 @@ import {
 import toast from "react-hot-toast";
 import { axiosConfig } from "../../axiosConfig";
 import { AxiosError } from "axios";
-import {
-  Alert,
-  AlertActions,
-  AlertBody,
-  AlertDescription,
-  AlertTitle,
-} from "../../components/alert";
 import PendingFriendModal from "../../components/PendingFriendModal";
 import { Link } from "react-router";
 
